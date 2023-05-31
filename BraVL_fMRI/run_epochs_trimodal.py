@@ -19,9 +19,10 @@ from utils.TBLogger import TBLogger
 
 sns.set(rc={'figure.figsize':(11.7,8.27)})  # 将seaborn的图片大小设置成: 11.7 x 8.27
 palette = sns.color_palette("bright", 2)  # 用于设置seaborn的颜色
-torch.set_default_tensor_type(torch.DoubleTensor)  # torch的float默认设置为双精度
+# torch.set_default_tensor_type(torch.DoubleTensor)  # torch的float默认设置为双精度
+torch.set_default_tensor_type(torch.FloatTensor)
 TINY = 1e-8  # 近似无穷小
-CONSTANT = 1e6  # 近似无穷大
+CONSTANT = 1e5  # 近似无穷大
 # global variables
 SEED = 2021  # 随机数种子
 SAMPLE1 = None
