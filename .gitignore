@@ -1,3 +1,7 @@
 .idea
 *.zip
 *.mat
+.vscode
+**/data/
+**/logs/
+**/__pycache__/
