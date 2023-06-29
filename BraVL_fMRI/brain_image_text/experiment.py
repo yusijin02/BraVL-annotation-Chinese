@@ -3,6 +3,7 @@ import numpy as np
 import itertools
 import scipy.io as sio
 import torch
+import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -38,9 +39,8 @@ class BrainImageText(BaseExperiment):
         # 至少得到两个: self.dataset_train, self.dataset_test
         # 至多得到四个: self.dataset_train, self.dataset_test, self.dataset_aug, self.dataset_val
         # 它们都是torch的可迭代对象
-
-
         self.mm_vae = self.set_model()  # 设置VAE模型
+        
         self.optimizer = None  # 优化器
         self.rec_weights = self.set_rec_weights()  # 设置重构损失权重
         # self.rec_weights = {"brain": 1.0, "image": 1.0, "text": 1.0}
@@ -56,7 +56,8 @@ class BrainImageText(BaseExperiment):
     def set_model(self):
         # 设置三模态的VAE模型
         model = VAEtrimodal(self.flags, self.modalities, self.subsets)
-        model = model.to(self.flags.device)
+        # model = model.to(self.flags.device)
+        model = nn.DataParallel(model, device_ids=self.flags.device_ids)
         return model  # 返回一个nn.Module的派生类对象(放进GPU里)
 
     def set_modalities(self):

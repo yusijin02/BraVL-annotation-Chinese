@@ -24,4 +24,5 @@ parser.add_argument('--div_weight_m1_content', type=float, default=0.25, help="d
 parser.add_argument('--div_weight_m2_content', type=float, default=0.25, help="default weight divergence term content modality 2")
 parser.add_argument('--div_weight_m3_content', type=float, default=0.25, help="default weight divergence term content modality 3")
 parser.add_argument('--div_weight_uniform_content', type=float, default=0.25, help="default weight divergence term prior")
-#
+
+parser.add_argument("--cuda_visable_device", type=str, default="1,2", help="cuda visable device")

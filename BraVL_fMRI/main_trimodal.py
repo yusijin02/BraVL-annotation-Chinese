@@ -1,6 +1,5 @@
 import sys
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import json
 import torch
 import torch.nn as nn
@@ -8,13 +7,17 @@ from run_epochs_trimodal import run_epochs_trimodal
 from utils.filehandling import create_dir_structure
 from brain_image_text.flags import parser
 from brain_image_text.experiment import BrainImageText
-torch.set_default_tensor_type(torch.DoubleTensor)
+# torch.set_default_tensor_type(torch.DoubleTensor)
 if __name__ == '__main__':
     FLAGS = parser.parse_args()
-    use_cuda = torch.cuda.is_available()
-    FLAGS.device = torch.device('cuda:0' if use_cuda else 'cpu')
-    FLAGS.ysj_devices = [torch.device('cuda:0'), torch.device('cuda:1')]
+    # use_cuda = torch.cuda.is_available()
+    # FLAGS.device = torch.device('cuda:0' if use_cuda else 'cpu')
+    os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.cuda_visable_device
+    FLAGS.device_ids = FLAGS.cuda_visable_device.split(",")
+    FLAGS.device_ids = range(len(FLAGS.device_ids))
 
+    print(FLAGS.cuda_visable_device)
+    print(FLAGS.device_ids)
 
     if FLAGS.method == 'poe':
         FLAGS.modality_poe=True
@@ -52,8 +55,6 @@ if __name__ == '__main__':
     mst = BrainImageText(FLAGS, alphabet)
     mst.set_optimizer()
 
-    mst = nn.DataParallel(mst, device_ids=FLAGS.ysj_devices)
-    mst.to(FLAGS.ysj_devices[0])
 
     total_params = sum(p.numel() for p in mst.mm_vae.parameters())
     print('num parameters model: ' + str(total_params))

@@ -58,7 +58,7 @@ class BaseMMVae(ABC, nn.Module):
         weights = utils.reweight_weights(torch.Tensor(self.flags.alpha_modalities))
         # alpha_modalities = [权重正则, 脑模态的权重正则, 视觉模态的权重正则, 文本模态的权重正则]
         # utils.reweight_weights() 确保它们的和为 1
-        self.weights = weights.to(self.flags.device)  # 将四个正则项的权重放入GPU
+        self.weights = weights.cuda()  # 将四个正则项的权重放入GPU
         if self.flags.modality_moe:
             self.modality_fusion = self.moe_fusion
             self.fusion_condition = self.fusion_condition_moe

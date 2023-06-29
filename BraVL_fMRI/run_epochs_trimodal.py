@@ -468,7 +468,7 @@ def update_Qnet(exp, batch):
         batch_d = batch[0]  # batch_d = {'image': image数据, 'text': text数据}
         # 让batch_d中的数据变为能够自动求导的Variable对象
         for k, m_key in enumerate(batch_d.keys()):
-            batch_d[m_key] = Variable(batch_d[m_key]).to(exp.flags.device)
+            batch_d[m_key] = Variable(batch_d[m_key]).cuda()
         results = mm_vae(batch_d)  # 前向计算, forward定义在 ./utils/BaseMMVae.py
         # results是一个特别恶心的字典
         z = results['class_embeddings']  # 子集之间做MOE之后融合得到的高斯分布的一个样本(可导采样)
@@ -502,6 +502,9 @@ def train_aug(epoch, exp, tb_logger):
                                 drop_last=True)                   # 如果数据不能被批量大小整除, 丢弃最后一个批量
 
         for iteration, batch in enumerate(aug_loader):
+            batch = [torch.tensor(tensor) for tensor in batch]
+            batch = [tensor.cuda() for tensor in batch]
+
             batch_new = {}
             batch_new[0] = dict()
             batch_new[0] = {'image':batch[0],'text':batch[1]}  # batch[0]是aug_image数据, batch[1]是aug_text数据
@@ -627,6 +630,8 @@ def train(epoch, exp, tb_logger):
                           num_workers=8, drop_last=True)
 
     for iteration, batch in enumerate(test_loader):
+        batch = [torch.tensor(tensor) for tensor in batch]
+        batch = [tensor.cuda() for tensor in batch]
         batch_new = {}
         batch_new[0] = dict()
         batch_new[0] = {'image':batch[1],'text':batch[2]}
@@ -741,6 +746,8 @@ def test(epoch, exp, tb_logger):
                             num_workers=8, drop_last=False)
 
         for iteration, batch in enumerate(d_loader):
+            batch = [torch.tensor(tensor) for tensor in batch]
+            batch = [tensor.cuda() for tensor in batch]
             batch_new = {}
             batch_new[0] = dict()
             batch_new[0] = {'brain': batch[0], 'image': batch[1], 'text': batch[2]}
